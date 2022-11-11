@@ -1,0 +1,3 @@
+*.json 
+nixbom/
+convert-nix-cyclonedx/
