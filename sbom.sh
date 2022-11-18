@@ -17,7 +17,7 @@ main () {
     DERIVATION=$(nix-instantiate "$TARGET_NIX_EXPRESSION_FILE" 2>/dev/null)
     exit_unless_file_exists "$DERIVATION"
 
-    run_nixbom
+    #run_nixbom
     run_convert_nix_cyclonedx
 
     echo "[+] Wrote the following results:"
