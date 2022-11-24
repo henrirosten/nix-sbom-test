@@ -17,18 +17,11 @@ main () {
     DERIVATION=$(nix-instantiate "$TARGET_NIX_EXPRESSION_FILE" 2>/dev/null)
     exit_unless_file_exists "$DERIVATION"
 
-    #run_nixbom
+    run_nixbom
     run_convert_nix_cyclonedx
+    run_bombon
 
-    echo "[+] Wrote the following results:"
-    echo ""
-    if [ -n "$run_nixbom_result" ]; then
-        echo "    $run_nixbom_result"
-    fi
-    if [ -n "$run_convert_nix_cyclonedx_result" ]; then
-        echo "    $run_convert_nix_cyclonedx_result"
-    fi
-    echo ""
+    print_results
 }
 
 run_nixbom () {
@@ -48,7 +41,7 @@ run_nixbom () {
         exit 1
     fi
     exit_unless_file_exists "nixpkgs.json"
-    run_nixbom_result="$MYDIR/SPDX.json"
+    run_nixbom_result="$MYDIR/nixbom.spdx.json"
     mv nixpkgs.json "$run_nixbom_result"
 }
 
@@ -64,12 +57,35 @@ run_convert_nix_cyclonedx () {
     fi
     exit_unless_file_exists "result/bin/convert-nix-cyclonedx"
     echo "[+] Generating SBOM (CycloneDX) with convert-nix-cyclonedx"
-    run_convert_nix_cyclonedx_result="$MYDIR/CycloneDX.json"
+    run_convert_nix_cyclonedx_result="$MYDIR/convert-nix-cyclonedx.cdx.json"
     if ! nix show-derivation "$DERIVATION" --recursive | result/bin/convert-nix-cyclonedx > "$run_convert_nix_cyclonedx_result"; then
         err_print "convert-nix-cyclonedx failed"
         exit 1
     fi
-    exit_unless_file_exists "$run_convert_nix_cyclonedx_result"
+}
+
+run_bombon () {
+    echo "[+] Generating SBOM (CycloneDX) with bombon"
+    run_bombon_result="$MYDIR/bombon.cdx.json"
+    cd "$MYDIR"/bombon || exit 1
+    if ! nix build --impure; then
+        err_print "bombon failed"
+        exit 1
+    fi
+    cp "./result" "$run_bombon_result" || exit 1
+    chmod u+w "$run_bombon_result"
+}
+
+print_results () {
+    echo "[+] Wrote the following results:"
+    echo ""
+    results="$run_nixbom_result $run_convert_nix_cyclonedx_result $run_bombon_result"
+    for result in $results; do
+        if [ -s "$result" ]; then
+            echo "    $result"
+        fi
+    done
+    echo ""
 }
 
 ################################################################################

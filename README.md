@@ -1,7 +1,7 @@
 # nix-sbom-test
 
 Test generating SBOM (both SPDX and CycloneDX) from nix package.
-For now, this is simply a wrapper around https://github.com/mstone/nixbom and https://github.com/sudo-bmitch/convert-nix-cyclonedx.
+For now, this is simply a wrapper around https://github.com/mstone/nixbom, https://github.com/sudo-bmitch/convert-nix-cyclonedx, and https://github.com/nikstur/bombon.
 
 ### Example usage
 ```
@@ -13,8 +13,11 @@ For now, this is simply a wrapper around https://github.com/mstone/nixbom and ht
 [+] Generating SBOM (SPDX) with nixbom
 [+] Building convert-nix-cyclonedx
 [+] Generating SBOM (CycloneDX) with convert-nix-cyclonedx
+[+] Generating SBOM (CycloneDX) with bombon
 [+] Wrote the following results:
 
-    /home/jdoe/nix-sbom-test/SPDX.json
-    /home/jdoe/nix-sbom-test/CycloneDX.json
+    /home/jdoe/nix-sbom-test/nixbom.spdx.json
+    /home/jdoe/nix-sbom-test/convert-nix-cyclonedx.cdx.json
+    /home/jdoe/nix-sbom-test/bombon.cdx.json
+
 ```

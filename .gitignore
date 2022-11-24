@@ -1,3 +1,5 @@
 *.json 
 nixbom/
 convert-nix-cyclonedx/
+result*
+temp/
